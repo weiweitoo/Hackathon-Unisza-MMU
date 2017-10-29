@@ -16,7 +16,7 @@ function playSound(Note,delaytime,Velocity = 127,Volume = 127){
 			// play the note
 			MIDI.setVolume(0, Volume);
 			MIDI.noteOn(0, note, velocity, delay);
-			MIDI.noteOff(0, note, delay + 0.75);
+			MIDI.noteOff(0, note, delay + 0.25);
 		}
 	});
 
@@ -25,10 +25,16 @@ function playSound(Note,delaytime,Velocity = 127,Volume = 127){
 
 function preload(){
 	console.log("preload");
+
+	game.load.audio('slowblue', ['asset/audio/slowmusic.mp3']);
 }
 
 function create(){
 	console.log('create');
+
+	music = game.add.audio('slowblue');
+	
+    music.play();
 
 	Qkey = game.input.keyboard.addKey(Phaser.Keyboard.Q);
 	Qkey.onDown.add(QKeyEvent, this);
@@ -59,6 +65,9 @@ function create(){
 
 	Pkey = game.input.keyboard.addKey(Phaser.Keyboard.P);
 	Pkey.onDown.add(PKeyEvent, this);
+
+	OpenBracketkey = game.input.keyboard.addKey(Phaser.Keyboard.OPEN_BRACKET);
+	OpenBracketkey.onDown.add(OpenBracketKeyEvent, this);
 }
 
 function update(){
@@ -113,4 +122,9 @@ function OKeyEvent(){
 function PKeyEvent(){
 	console.log("P");
 	playSound(79,0);
+}
+
+function OpenBracketKeyEvent(){
+	console.log("[");
+	playSound(81,0);
 }

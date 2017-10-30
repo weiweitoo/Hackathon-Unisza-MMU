@@ -64,8 +64,6 @@ function playSound(Note,delaytime,Velocity = 127,Volume = 127){
 } 
 
 function preload(){
-	console.log("preload");
-
 	game.load.audio('slowblue', ['asset/audio/Jazz.mp3']);
 
 
@@ -76,52 +74,20 @@ function preload(){
 	game.load.image('btn-inspiration','asset/img/inspirationbutton.png');
 	game.load.image('btn-instrument','/asset/img/instrumentbutton.png');
 	game.load.image('btn-backgroundsong','/asset/img/backgroundsongbutton.png');
-	
-}
-
-function PlayBGMover(){
-	console.log('button up');
-}
-
-function PlayBGMout(){
-	console.log("out");
-}
-
-function SpaceKeyEvent(){
-	if(recording == true){
-		recording = false;
-		console.log(interval);
-		console.log(notes);
-		console.log("recording end");
-		interval = convertInterval(interval);
-		playSoundWithInterval(notes,interval);
-		// clear the notes and interval
-		interval = [];
-		notes = [];
-	}
-	else if(recording == false){
-		recording = true;
-		interval.push(currTime());
-		console.log("recording start");
-	}
-	
 }
 
 function create(){
-	console.log('create');
-
 	music = game.add.audio('slowblue');
 	music.volume = 0.8;
     music.play();
-
 
     /////////////////////////////////
     // Draw Menu
     ////////////////////////////////
     // Button
 	var btnPlayBGM = game.add.button(ScreenWidth-130, 80, 'btn-playbackground', function(){console.log("Play Button Clicked")}, this, 2, 1, 0);
-    btnPlayBGM.onInputOver.add(PlayBGMover, this);
-    btnPlayBGM.onInputOut.add(PlayBGMout, this);
+    // btnPlayBGM.onInputOver.add(PlayBGMover, this);
+    // btnPlayBGM.onInputOut.add(PlayBGMout, this);
     btnPlayBGM.scale.setTo(0.15,0.15);
     btnPlayBGM.anchor.setTo(0.5, 0.5)
 
@@ -199,6 +165,7 @@ function create(){
 
 	Spacekey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);	
 	Spacekey.onDown.add(SpaceKeyEvent, this);
+	Spacekey.onUp.add(SpaceKeyEventUp, this);
 
 	/////////////////////////////////////////////
 	// Graphic
@@ -248,10 +215,13 @@ function update(){
 
 function drawRectPadding(x,y,width,height,padding,color){
 	graphics.beginFill(color);
-	graphics.drawRect( x - padding / 2,y - padding / 2,width + padding,height + padding);
-	
+	graphics.drawRect( x - padding / 2,y - padding / 2,width + padding,height + padding);	
 }
 
+
+//////////////////////////////////////////////////////
+// OnKeyDown Event
+///////////////////////////////////////////////////////
 function QKeyEvent(){
 	console.log("Q");
 	playSound(57,0);
@@ -419,7 +389,35 @@ function OpenBracketKeyEvent(){
 	}
 }	
 
+function SpaceKeyEvent(){
+	// Press key effect
+	graphics.beginFill(0x000000);
+	graphics.drawRect(0,(80 + 50) * 3,500,80);	
 
+	drawRectPadding(0,(80 + 50) * 3,500,80,-6,pressColor);
+
+
+	if(recording == true){
+		recording = false;
+		console.log("recording end");
+		interval = convertInterval(interval);
+		playSoundWithInterval(notes,interval);
+		// clear the notes and interval
+		interval = [];
+		notes = [];
+		intervalInSecond = [];
+	}
+	else if(recording == false){
+		recording = true;
+		interval.push(currTime());
+		console.log("recording start");
+	}
+	
+}
+
+/////////////////////////////////////////////////////////////////////////
+// On Key up
+/////////////////////////////////////////////////////////////////////////
 
 function QKeyEventUp(){
 	// lol, worry no enough time to code,better use fastest way
@@ -470,10 +468,14 @@ function OKeyEventUp(){
 function PKeyEventUp(){
 	graphics.beginFill(normalColor);
 	graphics.drawRect((140 + 40) * 1,(80 + 50) * 2,140,80);	
-	
 }
 
 function OpenBracketKeyEventUp(){
 	graphics.beginFill(normalColor);
 	graphics.drawRect((140 + 40) * 2,(80 + 50) * 2,140,80);	
-}	
+}
+
+function SpaceKeyEventUp(){
+	graphics.beginFill(normalColor);
+	graphics.drawRect(0,(80 + 50) * 3,500,80);	
+}

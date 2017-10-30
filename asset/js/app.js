@@ -1,20 +1,76 @@
-var game = new Phaser.Game(window.screen.availWidth, window.screen.availHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
-var normalColor = 0xFFFFFF;
-var pressColor = 0xa55cb2;
-var ScreenWidth = window.screen.availWidth;
-var ScreenHeight = window.screen.availHeight;
-var middleX = ScreenWidth / 2;
-var middleY = ScreenHeight / 2;
-
-var recording = false;
+// Global variable
+var NOTEPITCH = [45,48,50,52,55,57,60,62,64,67,69,72,74,76,79,81,84,86,88,91,93,96,98,100,103];
 var notes = [];
 var interval = [];
 var intervalInSecond = [];
+var recording = false;
 
+var keycode = [
+	81,87,69,82,84,
+	65,83,68,70,71,
+	90,88,67,86,66,
+	89,85,73,79,80,
+	72,74,75,76,186
+];
+var keyboard_pressing = [
+	false,false,false,false,false,
+	false,false,false,false,false,
+	false,false,false,false,false,
+	false,false,false,false,false,
+	false,false,false,false,false
+];
+var alphabent = [
+	'q','w','e','r','t',
+	'a','s','d','f','g',
+	'z','x','c','v','b',
+	'y','u','i','o','p',
+	'h','j','k','l','semicolon'
+];
 
-var NOTEPITCH = [45,48,50,52,55,57,60,62,64,67,69,72,74,76,79,81,84,86,88,91,93,96,98,100,103];
+var space_pressing = false;
 
+// For Front end
+$(document).ready(function(){
+	$(".playbgmbutton").hover(function() {
+		$( '.playbgmbutton' ).attr("src","asset/img/play-hover.PNG");
+		},
+		function(){
+			$( '.playbgmbutton' ).attr("src","asset/img/play.PNG");
+		}
+	)
+});
 
+function hehe(){
+	$('.bgm-window').css({
+		'transform':'translate(-50%,-50%)'
+	});
+	$('.black-layer').css({
+		'opacity' : '0.6'
+	});
+
+	$('.bgm-window > .close').on('click',function(){
+		$(this).parent().css({
+			'transform':'translate(-50%,-300%)'
+		});
+		$('.black-layer').css({
+			'opacity' : '0'
+		});	  	
+	});
+	console.log(23);
+};
+
+function playbgm(){
+	$('.backgroundmusic')[0].play();
+}
+
+function stopbgm(){
+	$('.backgroundmusic')[0].pause();
+	$('.backgroundmusic')[0].currentTime = 0;
+}
+
+////////////////////////////////////////////////////////////////////////////
+// for backeend
+/////////////////////////////////////////////////////////////////////////////
 function currTime(){
 	var d = new Date();
 	var n = d.getTime();
@@ -30,69 +86,64 @@ function convertInterval(interval){
 	return result;
 }
 
-function playSoundWithInterval(notes,interval){
-	var index = 0;
-    var rand = Math.random();
-	let timerId = setTimeout(function tick() {
-		console.log(NOTEPITCH[notes[index]]);
-		if (rand < 0.33){
-            playSound(NOTEPITCH[(notes[index]+1)],0);
-            if (notes[index] == 24){
-                playSound(105,0);
-            }
-		}
-		else if (rand < 0.66){
-            playSound(NOTEPITCH[(notes[index]-1)],0);
-            if (notes[index] == 0){
-                playSound(43,0);
-            }
-		}
-		else{
-            playSound(((NOTEPITCH[(notes[index])])+12),0);
-		}
-
-		if(typeof interval[index] != 'undefined')
-		{
-			index++;
-			timerId = setTimeout(tick, interval[index]);
-		}
-	}, 0);
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
 function inspiration(interval){
     var originalPhraseCount = 3;
     var phraseNoteCount = 3;
 	var phraseLeft = 4;
-    var up = [1,1,1,-1,-1];
-    var phraseWaitCount = 3;
+    var up = [1,1,1,-1,-1,0,-1,1,1];
+    var phraseWaitCount = 0;
     var noteNow = 10;
 	let metronome = setInterval(function tick() {
         if (phraseNoteCount > 0){
-            if (Math.random() < 0.5){
-                playSound(NOTEPITCH[notenow],0);
+                playSound(NOTEPITCH[noteNow],0);
+                console.log(NOTEPITCH[noteNow]);
                 noteNow = noteNow + up[(phraseNoteCount-1)];
-            }
-            phraseNoteCount--;
+                if ((noteNow > 24) || (noteNow < 0)){
+                    noteNow = noteNow - up[(phraseNoteCount-1)];
+                }
+                if (Math.random() < 0.25){
+                    let timerId = setTimeout(function noteBefore() {
+                        if (Math.random() < 0.125){
+                            playSound(NOTEPITCH[noteNow]+1,0);
+                        }
+                        else{
+                            playSound(NOTEPITCH[noteNow]-1,0);
+                        }
+                    }, 181.8181);
+                }
+                phraseNoteCount--;
         }
         else if (phraseWaitCount > 0){
             phraseWaitCount--;
+                console.log("Wait");
+            noteNow = getRandomInt(7,15);
+            for (i = 0; i <= 8; i++){
+                up[i] = getRandomInt(-1,1);
+            }
         }
-        else if (phraseLeft > 0){
-            phraseLeft--;
-            phraseNoteCount = originalPhraseCount;
-            phraseWaitCount = 6 - phraseNoteCount;
-        }
-		else{
-            originalPhraseCount = ((ceil(Math.random() * 10)) % 6) + 1;
-            phraseNoteCount = originalPhraseCount;
-            phraseLeft = (ceil(Math.random() * 10) + 3);
-            up[0] = (ceil(Math.random() * 10) % 3) - 1;
-            up[1] = (ceil(Math.random() * 10) % 3) - 1;
-            up[2] = (ceil(Math.random() * 10) % 3) - 1;
-            up[3] = (ceil(Math.random() * 10) % 3) - 1;
-            up[4] = (ceil(Math.random() * 10) % 3) - 1;
-            phraseWaitCount = 6 - phraseNoteCount;
-            noteNow = 10 + ((ceil(Math.random() * 10) % 2) * 5);
+        else{
+            if (phraseLeft > 1){
+                phraseLeft--;
+                phraseNoteCount = originalPhraseCount;
+                phraseWaitCount = 6 - phraseNoteCount;
+            }
+            else if (phraseLeft == 1){
+                playSound(NOTEPITCH[15],0);
+                originalPhraseCount = getRandomInt(3,6);
+                phraseNoteCount = originalPhraseCount;
+                phraseLeft = getRandomInt(2,4);
+                for (i = 0; i <= 8; i++){
+                    up[i] = getRandomInt(-1,1);
+                }
+                phraseWaitCount = 6 - phraseNoteCount;
+                noteNow = 15;
+            }
         }
 	}, interval);
 }
@@ -116,419 +167,149 @@ function playSound(Note,delaytime,Velocity = 127,Volume = 127){
 	});
 }
 
-function preload(){
-	game.load.audio('slowblue', ['asset/audio/Jazz.mp3']);
-
-
-	game.load.image('btn-playbackground','./asset/img/playbackgroundbutton.png');
-	game.load.image('btn-stopbackground','asset/img/stopbackgroundbutton.png');
-	game.load.image('btn-record','asset/img/recordbutton.png');
-	game.load.image('btn-replay','asset/img/replaybutton.png');
-	game.load.image('btn-inspiration','asset/img/inspirationbutton.png');
-	game.load.image('btn-instrument','/asset/img/instrumentbutton.png');
-	game.load.image('btn-backgroundsong','/asset/img/backgroundsongbutton.png');
-}
-
-function create(){
-	music = game.add.audio('slowblue');
-	music.volume = 0.8;
-    music.play();
-
-    /////////////////////////////////
-    // Draw Menu
-    ////////////////////////////////
-    // Button
-	var btnPlayBGM = game.add.button(ScreenWidth-130, 80, 'btn-playbackground', function(){console.log("Play Button Clicked")}, this, 2, 1, 0);
-    // btnPlayBGM.onInputOver.add(PlayBGMover, this);
-    // btnPlayBGM.onInputOut.add(PlayBGMout, this);
-    btnPlayBGM.scale.setTo(0.15,0.15);
-    btnPlayBGM.anchor.setTo(0.5, 0.5)
-
-    var btnStopBGM = game.add.button(ScreenWidth - 80,80, 'btn-playbackground', function(){console.log("Stop Button Clicked")}, this, 2, 1, 0);
-    btnStopBGM.scale.setTo(0.15,0.15);
-    btnStopBGM.anchor.setTo(0.5, 0.5);
-
-    var btnRecord = game.add.button(ScreenWidth - 160,140, 'btn-playbackground', function(){console.log("Record Button Clicked")}, this, 2, 1, 0);
-    btnRecord.scale.setTo(0.15,0.15);
-    btnRecord.anchor.setTo(0.5, 0.5);
-
-    var btnReplay = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){console.log("Replay Button Clicked")}, this, 2, 1, 0);
-    btnReplay.scale.setTo(0.15,0.15);
-    btnReplay.anchor.setTo(0.5, 0.5);
-
-    var btnInspiration = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){console.log("Inspiration Button Clicked")}, this, 2, 1, 0);
-    btnInspiration.scale.setTo(0.15,0.15);
-    btnInspiration.anchor.setTo(0.5, 0.5);
-
-    var btnInstrument = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){console.log("Instrument Button Clicked")}, this, 2, 1, 0);
-    btnInstrument.scale.setTo(0.15,0.15);
-    btnInstrument.anchor.setTo(0.5, 0.5);
-
-    var btnBackGroundSong = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){console.log("BackgroundSong Button Clicked")}, this, 2, 1, 0);
-    btnBackGroundSong.scale.setTo(0.15,0.15);
-    btnBackGroundSong.anchor.setTo(0.5, 0.5);
-
-
-    ///////////////////////////////////////
-    // Key event
-    /////////////////////////////////////////
-	Qkey = game.input.keyboard.addKey(Phaser.Keyboard.Q);
-	Qkey.onDown.add(QKeyEvent, this);
-	Qkey.onUp.add(QKeyEventUp, this);
-
-	Wkey = game.input.keyboard.addKey(Phaser.Keyboard.W);
-	Wkey.onDown.add(WKeyEvent, this);
-	Wkey.onUp.add(WKeyEventUp, this);
-
-	Ekey = game.input.keyboard.addKey(Phaser.Keyboard.E);
-	Ekey.onDown.add(EKeyEvent, this);
-	Ekey.onUp.add(EKeyEventUp, this);
-
-	Rkey = game.input.keyboard.addKey(Phaser.Keyboard.R);
-	Rkey.onDown.add(RKeyEvent, this);
-	Rkey.onUp.add(RKeyEventUp, this);
-
-	Tkey = game.input.keyboard.addKey(Phaser.Keyboard.T);
-	Tkey.onDown.add(TKeyEvent, this);
-	Tkey.onUp.add(TKeyEventUp, this);
-
-	Ykey = game.input.keyboard.addKey(Phaser.Keyboard.Y);
-	Ykey.onDown.add(YKeyEvent, this);
-	Ykey.onUp.add(YKeyEventUp, this);
-
-	Ukey = game.input.keyboard.addKey(Phaser.Keyboard.U);
-	Ukey.onDown.add(UKeyEvent, this);
-	Ukey.onUp.add(UKeyEventUp, this);
-
-	Ikey = game.input.keyboard.addKey(Phaser.Keyboard.I);
-	Ikey.onDown.add(IKeyEvent, this);
-	Ikey.onUp.add(IKeyEventUp, this);
-
-	Okey = game.input.keyboard.addKey(Phaser.Keyboard.O);
-	Okey.onDown.add(OKeyEvent, this);
-	Okey.onUp.add(OKeyEventUp, this);
-
-	Pkey = game.input.keyboard.addKey(Phaser.Keyboard.P);
-	Pkey.onDown.add(PKeyEvent, this);
-	Pkey.onUp.add(PKeyEventUp, this);
-
-	OpenBracketkey = game.input.keyboard.addKey(Phaser.Keyboard.OPEN_BRACKET);
-	OpenBracketkey.onDown.add(OpenBracketKeyEvent, this);
-	OpenBracketkey.onUp.add(OpenBracketKeyEventUp, this);
-
-	Spacekey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	Spacekey.onDown.add(SpaceKeyEvent, this);
-	Spacekey.onUp.add(SpaceKeyEventUp, this);
-
-	/////////////////////////////////////////////
-	// Graphic
-	/////////////////////////////////////////////
-
-
-	// for row 1 and 2
-	// the varaible is keep resuing hehe, since it is lazy to change
-	var noteWidth = 80;
-	var noteHeight = 80;
-	var noteIntervalX = 60;
-	var noteIntervalY = 50;
-
-	var graphics = game.add.graphics(350, 100);
-
-    // set a fill and line style
-    graphics.beginFill(normalColor);
-    // draw a rectangle
-    graphics.lineStyle(0, 0x0000FF, 0);
-    for (var i = 0; i < 4; i++) {
-    	graphics.drawRect((noteWidth + noteIntervalX) * i,0,noteWidth,noteHeight);
-    }
-    for (var i = 0; i < 4; i++) {
-    	graphics.drawRect((noteWidth + noteIntervalX) * i,noteHeight + noteIntervalY,noteWidth,noteHeight);
-    }
-
-    // For row 3, i am damn lazy to change the variable name lol
-    var noteWidth = 140;
-	var noteHeight = 80;
-	var noteIntervalX = 40;
-	var noteIntervalY = 50;
-
-    for (var i = 0; i < 3; i++) {
-    	graphics.drawRect((noteWidth + noteIntervalX) * i,(noteHeight + noteIntervalY) * 2,noteWidth,noteHeight);
-    }
-
-    // row 4
-    graphics.drawRect(0,(noteHeight + noteIntervalY) * 3,500,noteHeight);
-
-
-    window.graphics = graphics;
-}
-
-function update(){
-
-}
-
-function drawRectPadding(x,y,width,height,padding,color){
-	graphics.beginFill(color);
-	graphics.drawRect( x - padding / 2,y - padding / 2,width + padding,height + padding);
-}
-
-
-//////////////////////////////////////////////////////
-// OnKeyDown Event
-///////////////////////////////////////////////////////
-function QKeyEvent(){
-	console.log("Q");
-	playSound(57,0);
-	// lol, worry no enough time to code,better use fastest way
-	graphics.beginFill(0x000000);
-	graphics.drawRect((80 + 60) * 0,0,80,80);
-
-	drawRectPadding((80 + 60) * 0,0,80,80,-6,pressColor);
-
-	if(recording){
-		console.log(currTime());
-		interval.push(currTime());
-		notes.push(0);
-	}
-}
-
-function WKeyEvent(){
-	console.log("W");
-	playSound(60,0);
-	graphics.beginFill(0x000000);
-	graphics.drawRect((80 + 60) * 1,0,80,80);
-
-	drawRectPadding((80 + 60) * 1,0,80,80,-6,pressColor);
-
-	if(recording){
-		console.log(currTime());
-		interval.push(currTime());
-		notes.push(1);
-	}
-}
-
-function EKeyEvent(){
-	console.log("E");
-	playSound(62,0);
-	graphics.beginFill(0x000000);
-	graphics.drawRect((80 + 60) * 2,0,80,80);
-
-	drawRectPadding((80 + 60) * 2,0,80,80,-6,pressColor);
-
-	if(recording){
-		console.log(currTime());
-		interval.push(currTime());
-		notes.push(2);
-	}
-}
-
-function RKeyEvent(){
-	console.log("R");
-	playSound(64,0);
-	graphics.beginFill(0x000000);
-	graphics.drawRect((80 + 60) * 3,0,80,80);
-
-	drawRectPadding((80 + 60) * 3,0,80,80,-6,pressColor);
-
-	if(recording){
-		console.log(currTime());
-		interval.push(currTime());
-		notes.push(3);
-	}
-}
-
-function TKeyEvent(){
-	console.log("T");
-	playSound(67,0);
-	graphics.beginFill(0x000000);
-	graphics.drawRect((80 + 60) * 0,80 + 50,80,80);
-
-	drawRectPadding((80 + 60) * 0,80 + 50,80,80,-6,pressColor);
-
-	if(recording){
-		console.log(currTime());
-		interval.push(currTime());
-		notes.push(4);
-	}
-}
-
-function YKeyEvent(){
-	console.log("Y");
-	playSound(69,0);
-	graphics.beginFill(0x000000);
-	graphics.drawRect((80 + 60) * 1,80 + 50,80,80);
-
-	drawRectPadding((80 + 60) * 1,80 + 50,80,80,-6,pressColor);
-
-	if(recording){
-		console.log(currTime());
-		interval.push(currTime());
-		notes.push(5);
-	}
-}
-
-function UKeyEvent(){
-	console.log("U");
-	playSound(72,0);
-	graphics.beginFill(0x000000);
-	graphics.drawRect((80 + 60) * 2,80 + 50,80,80);
-
-	drawRectPadding((80 + 60) * 2,80 + 50,80,80,-6,pressColor);
-
-	if(recording){
-		console.log(currTime());
-		interval.push(currTime());
-		notes.push(6);
-	}
-}
-
-function IKeyEvent(){
-	console.log("I");
-	playSound(74,0);
-	graphics.beginFill(0x000000);
-	graphics.drawRect((80 + 60) * 3,80 + 50,80,80);
-
-	drawRectPadding((80 + 60) * 3,80 + 50,80,80,-6,pressColor);
-
-	if(recording){
-		console.log(currTime());
-		interval.push(currTime());
-		notes.push(7);
-	}
-}
-
-function OKeyEvent(){
-	console.log("O");
-	playSound(76,0);
-
-	graphics.beginFill(0x000000);
-	graphics.drawRect((140 + 40) * 0,(80 + 50) * 2,140,80)
-
-	drawRectPadding((140 + 40) * 0,(80 + 50) * 2,140,80,-6,pressColor);
-
-	if(recording){
-		console.log(currTime());
-		interval.push(currTime());
-		notes.push(8);
-	}
-}
-
-function PKeyEvent(){
-	console.log("P");
-	playSound(79,0);
-	graphics.beginFill(0x000000);
-	graphics.drawRect((140 + 40) * 1,(80 + 50) * 2,140,80)
-
-	drawRectPadding((140 + 40) * 1,(80 + 50) * 2,140,80,-6,pressColor);
-
-	if(recording){
-		console.log(currTime());
-		interval.push(currTime());
-		notes.push(9);
-	}
-}
-
-function OpenBracketKeyEvent(){
-	console.log("[");
-	playSound(81,0);
-	graphics.beginFill(0x000000);
-	graphics.drawRect((140 + 40) * 2,(80 + 50) * 2,140,80)
-
-	drawRectPadding((140 + 40) * 2,(80 + 50) * 2,140,80,-6,pressColor);
-
-	if(recording){
-		console.log(currTime());
-		interval.push(currTime());
-		notes.push(10);
-	}
-}
-
-function SpaceKeyEvent(){
-	// Press key effect
-	graphics.beginFill(0x000000);
-	graphics.drawRect(0,(80 + 50) * 3,500,80);
-
-	drawRectPadding(0,(80 + 50) * 3,500,80,-6,pressColor);
-
-
-	if(recording == true){
-		recording = false;
-		console.log("recording end");
-		interval = convertInterval(interval);
-		playSoundWithInterval(notes,interval);
-		// clear the notes and interval
-		interval = [];
+function record(){
+	if(recording === false){ 
+		interval =[];
 		notes = [];
 		intervalInSecond = [];
-	}
-	else if(recording == false){
+
 		recording = true;
+		console.log(currTime());
+		console.log("start recording");	
 		interval.push(currTime());
-		console.log("recording start");
 	}
-
+	else if (recording === true){
+		recording = false;
+		intervalInSecond = convertInterval(interval);
+		console.log("end recording");
+	}
 }
 
-/////////////////////////////////////////////////////////////////////////
-// On Key up
-/////////////////////////////////////////////////////////////////////////
+function playSoundWithIntervalToo(){
+	var index = 0;
+	let timerId = setTimeout(function tick() {
+		playSound(NOTEPITCH[notes[index]],0);
+		// console.log(intervalInSecond[index]);
+		// console.log(NOTEPITCH[notes[index]]);
+		index++;
 
-function QKeyEventUp(){
-	// lol, worry no enough time to code,better use fastest way
-	graphics.beginFill(normalColor);
-	graphics.drawRect((80 + 60) * 0,0,80,80);
+		if(typeof intervalInSecond[index] != 'undefined')
+		{
+			timerId = setTimeout(tick, intervalInSecond[index]);
+		}
+	}, 0);
 }
 
-function WKeyEventUp(){
-	graphics.beginFill(normalColor);
-	graphics.drawRect((80 + 60) * 1,0,80,80);
+function playSoundWithIntervalJohn(){
+	var index = 0;
+	var rand = Math.random();
+	let timerId = setTimeout(function tick() {
+		// console.log(intervalInSecond[index]);
+		// console.log(NOTEPITCH[notes[index]]);
+		if (rand < 0.33){
+            playSound(NOTEPITCH[(notes[index]+1)],0);
+            if (notes[index] == 24){
+                playSound(105,0);
+            }
+		}
+		else if (rand < 0.66){
+            playSound(NOTEPITCH[(notes[index]-1)],0);
+            if (notes[index] == 0){
+                playSound(43,0);
+            }
+		}
+		else{
+            playSound(((NOTEPITCH[(notes[index])])+12),0);
+		}
+
+		index++;
+
+		if(typeof intervalInSecond[index] != 'undefined')
+		{
+			timerId = setTimeout(tick, intervalInSecond[index]);
+		}
+	}, 0);
 }
 
-function EKeyEventUp(){
-	graphics.beginFill(normalColor);
-	graphics.drawRect((80 + 60) * 2,0,80,80);
+function playSoundWithIntervalToo(){
+	var index = 0;
+	let timerId = setTimeout(function tick() {
+		playSound(NOTEPITCH[notes[index]],0);
+		console.log(intervalInSecond[index]);
+		console.log(NOTEPITCH[notes[index]]);
+		index++;
+
+		if(typeof intervalInSecond[index] != 'undefined')
+		{
+			timerId = setTimeout(tick, intervalInSecond[index]);
+		}
+	}, 0);
 }
 
-function RKeyEventUp(){
-	graphics.beginFill(normalColor);
-	graphics.drawRect((80 + 60) * 3,0,80,80);
-}
 
-function TKeyEventUp(){
-	graphics.beginFill(normalColor);
-	graphics.drawRect((80 + 60) * 0,80 + 50,80,80);
-}
+// Event listener
+$(document).ready(function(){
+	document.addEventListener('keydown', function(event) {
+		// for keybord event
+		for (var i = 0; i < alphabent.length; i++) {
+			console.log(event.keyCode);
+			if(event.keyCode == keycode[i] && keyboard_pressing[i] == false) {
+				playSound(NOTEPITCH[i],0);
+				keyboard_pressing[i] = true;
+				// lol, worry no enough time to code,better use fastest way
+				var effect = "";
+				var temp = i % 5;
+				if(temp == 0){
+					effect = '0px 0px 15px 6px ' + 'blue';
+				}
+				else if (temp == 1){
+					effect = '0px 0px 15px 6px ' + 'teal';	
+				}
+				else if (temp == 2){
+					effect = '0px 0px 15px 6px ' + 'red';	
+				}
+				else if (temp == 3){
+					effect = '0px 0px 15px 6px ' + 'green';	
+				}
+				else if (temp == 4){
+					effect = '0px 0px 15px 6px ' + 'purple';	
+				}
 
-function YKeyEventUp(){
-	graphics.beginFill(normalColor);
-	graphics.drawRect((80 + 60) * 1,80 + 50,80,80);
-}
+				$('#' + alphabent[i] + 'key').css('box-shadow',effect);
+				if(recording){ 
+					console.log(currTime());	
+					interval.push(currTime());
+					notes.push(i);
+				}
+			}
+		}
 
-function UKeyEventUp(){
-	graphics.beginFill(normalColor);
-	graphics.drawRect((80 + 60) * 2,80 + 50,80,80);
-}
+		//For space key event
+		if(event.keyCode == 32 && space_pressing == false) {
+			space_pressing = true;
+			record();
+			// end recording
+			if(recording == false){
+				playSoundWithIntervalJohn();
+			}
+		}
+	});
 
-function IKeyEventUp(){
-	graphics.beginFill(normalColor);
-	graphics.drawRect((80 + 60) * 3,80 + 50,80,80);
-}
+	document.addEventListener('keyup',function(event){
+		for (var i = 0; i < alphabent.length; i++) {
+			if(event.keyCode == keycode[i] && keyboard_pressing[i] === true) {
+				keyboard_pressing[i] = false;
+				$('#' + alphabent[i] + 'key').css('box-shadow','none');
+			}
+		}
 
-function OKeyEventUp(){
-	graphics.beginFill(normalColor);
-	graphics.drawRect((140 + 40) * 0,(80 + 50) * 2,140,80);
-}
+		// for space key event
+		if(event.keyCode == 32 && space_pressing == true) {
+			space_pressing = false;
+		}
+	});
+});
 
-function PKeyEventUp(){
-	graphics.beginFill(normalColor);
-	graphics.drawRect((140 + 40) * 1,(80 + 50) * 2,140,80);
-}
 
-function OpenBracketKeyEventUp(){
-	graphics.beginFill(normalColor);
-	graphics.drawRect((140 + 40) * 2,(80 + 50) * 2,140,80);
-}
 
-function SpaceKeyEventUp(){
-	graphics.beginFill(normalColor);
-	graphics.drawRect(0,(80 + 50) * 3,500,80);
-}
+

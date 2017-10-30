@@ -6,6 +6,43 @@ var ScreenHeight = window.screen.availHeight;
 var middleX = ScreenWidth / 2;
 var middleY = ScreenHeight / 2;
 
+var recording = false;
+var notes = [];
+var interval = [];
+var intervalInSecond = [];
+
+
+var NOTEPITCH = [57,60,62,64,67,69,72,74,76,79,81];
+
+
+function currTime(){
+	var d = new Date();
+	var n = d.getTime();
+	return n;
+}
+
+function convertInterval(interval){
+	var result = [];
+	for (var i = 0; i < interval.length-1; i++) {
+		result.push(interval[i+1] - interval[i]);
+	}
+	console.log(result);
+	return result;
+}
+
+function playSoundWithInterval(notes,interval){
+	var index = 0;
+	let timerId = setTimeout(function tick() {
+		console.log(NOTEPITCH[notes[index]]);
+		playSound(NOTEPITCH[notes[index]],0);
+		if(typeof interval[index] != 'undefined')
+		{
+			index++;
+			timerId = setTimeout(tick, interval[index]);
+		}
+	}, 0);
+
+}
 
 function playSound(Note,delaytime,Velocity = 127,Volume = 127){
 	MIDI.loadPlugin({
@@ -24,14 +61,12 @@ function playSound(Note,delaytime,Velocity = 127,Volume = 127){
 			MIDI.noteOff(0, note, delay + 0.25);
 		}
 	});
-
-}
-
+} 
 
 function preload(){
 	console.log("preload");
 
-	game.load.audio('slowblue', ['asset/audio/slowmusic.mp3']);
+	game.load.audio('slowblue', ['asset/audio/Jazz.mp3']);
 
 
 	game.load.image('btn-playbackground','./asset/img/playbackgroundbutton.png');
@@ -52,43 +87,65 @@ function PlayBGMout(){
 	console.log("out");
 }
 
+function SpaceKeyEvent(){
+	if(recording == true){
+		recording = false;
+		console.log(interval);
+		console.log(notes);
+		console.log("recording end");
+		interval = convertInterval(interval);
+		playSoundWithInterval(notes,interval);
+		// clear the notes and interval
+		interval = [];
+		notes = [];
+	}
+	else if(recording == false){
+		recording = true;
+		interval.push(currTime());
+		console.log("recording start");
+	}
+	
+}
+
 function create(){
 	console.log('create');
 
 	music = game.add.audio('slowblue');
+	music.volume = 0.8;
     music.play();
+
 
     /////////////////////////////////
     // Draw Menu
     ////////////////////////////////
     // Button
-	var btnPlayBGM = game.add.button(ScreenWidth-130, 80, 'btn-playbackground', function(){console.log("23")}, this, 2, 1, 0);
+	var btnPlayBGM = game.add.button(ScreenWidth-130, 80, 'btn-playbackground', function(){console.log("Play Button Clicked")}, this, 2, 1, 0);
     btnPlayBGM.onInputOver.add(PlayBGMover, this);
     btnPlayBGM.onInputOut.add(PlayBGMout, this);
     btnPlayBGM.scale.setTo(0.15,0.15);
     btnPlayBGM.anchor.setTo(0.5, 0.5)
 
-    var btnStopBGM = game.add.button(ScreenWidth - 80,80, 'btn-playbackground', function(){}, this, 2, 1, 0);
+    var btnStopBGM = game.add.button(ScreenWidth - 80,80, 'btn-playbackground', function(){console.log("Stop Button Clicked")}, this, 2, 1, 0);
     btnStopBGM.scale.setTo(0.15,0.15);
     btnStopBGM.anchor.setTo(0.5, 0.5);
 
-    var btnRecord = game.add.button(ScreenWidth - 160,140, 'btn-playbackground', function(){}, this, 2, 1, 0);
+    var btnRecord = game.add.button(ScreenWidth - 160,140, 'btn-playbackground', function(){console.log("Record Button Clicked")}, this, 2, 1, 0);
     btnRecord.scale.setTo(0.15,0.15);
     btnRecord.anchor.setTo(0.5, 0.5);
 
-    var btnReplay = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){}, this, 2, 1, 0);
+    var btnReplay = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){console.log("Replay Button Clicked")}, this, 2, 1, 0);
     btnReplay.scale.setTo(0.15,0.15);
     btnReplay.anchor.setTo(0.5, 0.5);
 
-    var btnInspiration = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){}, this, 2, 1, 0);
+    var btnInspiration = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){console.log("Inspiration Button Clicked")}, this, 2, 1, 0);
     btnInspiration.scale.setTo(0.15,0.15);
     btnInspiration.anchor.setTo(0.5, 0.5);
 
-    var btnInstrument = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){}, this, 2, 1, 0);
+    var btnInstrument = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){console.log("Instrument Button Clicked")}, this, 2, 1, 0);
     btnInstrument.scale.setTo(0.15,0.15);
     btnInstrument.anchor.setTo(0.5, 0.5);
 
-    var btnBackGroundSong = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){}, this, 2, 1, 0);
+    var btnBackGroundSong = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){console.log("BackgroundSong Button Clicked")}, this, 2, 1, 0);
     btnBackGroundSong.scale.setTo(0.15,0.15);
     btnBackGroundSong.anchor.setTo(0.5, 0.5);
 
@@ -139,6 +196,9 @@ function create(){
 	OpenBracketkey = game.input.keyboard.addKey(Phaser.Keyboard.OPEN_BRACKET);
 	OpenBracketkey.onDown.add(OpenBracketKeyEvent, this);
 	OpenBracketkey.onUp.add(OpenBracketKeyEventUp, this);
+
+	Spacekey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);	
+	Spacekey.onDown.add(SpaceKeyEvent, this);
 
 	/////////////////////////////////////////////
 	// Graphic
@@ -201,6 +261,11 @@ function QKeyEvent(){
 
 	drawRectPadding((80 + 60) * 0,0,80,80,-6,pressColor);
 	
+	if(recording){ 
+		console.log(currTime());	
+		interval.push(currTime());
+		notes.push(0);
+	}
 }
 
 function WKeyEvent(){
@@ -210,6 +275,12 @@ function WKeyEvent(){
 	graphics.drawRect((80 + 60) * 1,0,80,80);
 
 	drawRectPadding((80 + 60) * 1,0,80,80,-6,pressColor);
+
+	if(recording){ 
+		console.log(currTime());	
+		interval.push(currTime());
+		notes.push(1);
+	}
 }
 
 function EKeyEvent(){
@@ -219,6 +290,12 @@ function EKeyEvent(){
 	graphics.drawRect((80 + 60) * 2,0,80,80);
 
 	drawRectPadding((80 + 60) * 2,0,80,80,-6,pressColor);
+
+	if(recording){ 
+		console.log(currTime());	
+		interval.push(currTime());
+		notes.push(2);
+	}
 }
 
 function RKeyEvent(){
@@ -228,6 +305,12 @@ function RKeyEvent(){
 	graphics.drawRect((80 + 60) * 3,0,80,80);
 
 	drawRectPadding((80 + 60) * 3,0,80,80,-6,pressColor);
+
+	if(recording){ 
+		console.log(currTime());	
+		interval.push(currTime());
+		notes.push(3);
+	}
 }
 
 function TKeyEvent(){
@@ -237,6 +320,12 @@ function TKeyEvent(){
 	graphics.drawRect((80 + 60) * 0,80 + 50,80,80);	
 
 	drawRectPadding((80 + 60) * 0,80 + 50,80,80,-6,pressColor);
+
+	if(recording){ 
+		console.log(currTime());	
+		interval.push(currTime());
+		notes.push(4);
+	}
 }
 
 function YKeyEvent(){
@@ -246,6 +335,12 @@ function YKeyEvent(){
 	graphics.drawRect((80 + 60) * 1,80 + 50,80,80);	
 
 	drawRectPadding((80 + 60) * 1,80 + 50,80,80,-6,pressColor);
+
+	if(recording){ 
+		console.log(currTime());	
+		interval.push(currTime());
+		notes.push(5);
+	}
 }
 
 function UKeyEvent(){
@@ -255,6 +350,12 @@ function UKeyEvent(){
 	graphics.drawRect((80 + 60) * 2,80 + 50,80,80);	
 
 	drawRectPadding((80 + 60) * 2,80 + 50,80,80,-6,pressColor);
+
+	if(recording){ 
+		console.log(currTime());	
+		interval.push(currTime());
+		notes.push(6);
+	}
 }
 
 function IKeyEvent(){
@@ -264,6 +365,12 @@ function IKeyEvent(){
 	graphics.drawRect((80 + 60) * 3,80 + 50,80,80);	
 
 	drawRectPadding((80 + 60) * 3,80 + 50,80,80,-6,pressColor);
+	
+	if(recording){ 
+		console.log(currTime());	
+		interval.push(currTime());
+		notes.push(7);
+	}
 }
 
 function OKeyEvent(){
@@ -275,6 +382,11 @@ function OKeyEvent(){
 
 	drawRectPadding((140 + 40) * 0,(80 + 50) * 2,140,80,-6,pressColor);
 
+	if(recording){ 
+		console.log(currTime());	
+		interval.push(currTime());
+		notes.push(8);
+	}
 }
 
 function PKeyEvent(){
@@ -285,7 +397,11 @@ function PKeyEvent(){
 
 	drawRectPadding((140 + 40) * 1,(80 + 50) * 2,140,80,-6,pressColor);
 
-	
+	if(recording){ 
+		console.log(currTime());	
+		interval.push(currTime());
+		notes.push(9);
+	}
 }
 
 function OpenBracketKeyEvent(){
@@ -296,75 +412,68 @@ function OpenBracketKeyEvent(){
 
 	drawRectPadding((140 + 40) * 2,(80 + 50) * 2,140,80,-6,pressColor);
 
+	if(recording){ 
+		console.log(currTime());	
+		interval.push(currTime());
+		notes.push(10);
+	}
 }	
 
 
 
 function QKeyEventUp(){
-	console.log("Q-Up");
 	// lol, worry no enough time to code,better use fastest way
 	graphics.beginFill(normalColor);
 	graphics.drawRect((80 + 60) * 0,0,80,80);
-	
 }
 
 function WKeyEventUp(){
-	console.log("W");
 	graphics.beginFill(normalColor);
 	graphics.drawRect((80 + 60) * 1,0,80,80);	
 }
 
 function EKeyEventUp(){
-	console.log("E");
 	graphics.beginFill(normalColor);
 	graphics.drawRect((80 + 60) * 2,0,80,80);	
 }
 
 function RKeyEventUp(){
-	console.log("R");
 	graphics.beginFill(normalColor);
 	graphics.drawRect((80 + 60) * 3,0,80,80);	
 }
 
 function TKeyEventUp(){
-	console.log("T");
 	graphics.beginFill(normalColor);
 	graphics.drawRect((80 + 60) * 0,80 + 50,80,80);	
 }
 
 function YKeyEventUp(){
-	console.log("Y");
 	graphics.beginFill(normalColor);
 	graphics.drawRect((80 + 60) * 1,80 + 50,80,80);	
 }
 
 function UKeyEventUp(){
-	console.log("U");
 	graphics.beginFill(normalColor);
 	graphics.drawRect((80 + 60) * 2,80 + 50,80,80);	
 }
 
 function IKeyEventUp(){
-	console.log("I");
 	graphics.beginFill(normalColor);
 	graphics.drawRect((80 + 60) * 3,80 + 50,80,80);	
 }
 
 function OKeyEventUp(){
-	console.log("O");
 	graphics.beginFill(normalColor);
 	graphics.drawRect((140 + 40) * 0,(80 + 50) * 2,140,80);	
 }
 
 function PKeyEventUp(){
-	console.log("P");
 	graphics.beginFill(normalColor);
 	graphics.drawRect((140 + 40) * 1,(80 + 50) * 2,140,80);	
 	
 }
 
 function OpenBracketKeyEventUp(){
-	console.log("[");
 	graphics.beginFill(normalColor);
 	graphics.drawRect((140 + 40) * 2,(80 + 50) * 2,140,80);	
 }	

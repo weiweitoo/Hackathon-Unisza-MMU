@@ -45,7 +45,7 @@ function preload(){
 }
 
 function PlayBGMover(){
-	console.log('in');
+	console.log(this);
 }
 
 function PlayBGMout(){
@@ -62,12 +62,9 @@ function create(){
     // Draw Menu
     ////////////////////////////////
     // Button
-	var btnPlayBGM = game.add.button(game.world.centerX - 95, 400, 'btn-playbackground', function(){}, this, 2, 1, 0);
-
-	
+	var btnPlayBGM = game.add.button(100, 400, 'btn-playbackground', function(){}, this, 2, 1, 0);
     btnPlayBGM.onInputOver.add(PlayBGMover, this);
     btnPlayBGM.onInputOut.add(PlayBGMout, this);
-
 
     var btnStopBGM = game.add.sprite(ScreenWidth - 150,50,'btn-stopbackground');
     btnStopBGM.scale.setTo(0.15,0.15);

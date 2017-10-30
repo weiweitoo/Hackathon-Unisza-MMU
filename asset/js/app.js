@@ -34,7 +34,7 @@ function preload(){
 	game.load.audio('slowblue', ['asset/audio/slowmusic.mp3']);
 
 
-	game.load.image('btn-playbackground','./asset/img/playbackgroundbutton.jpg');
+	game.load.image('btn-playbackground','./asset/img/playbackgroundbutton.png');
 	game.load.image('btn-stopbackground','asset/img/stopbackgroundbutton.png');
 	game.load.image('btn-record','asset/img/recordbutton.png');
 	game.load.image('btn-replay','asset/img/replaybutton.png');
@@ -45,7 +45,7 @@ function preload(){
 }
 
 function PlayBGMover(){
-	console.log(this);
+	console.log('button up');
 }
 
 function PlayBGMout(){
@@ -62,27 +62,35 @@ function create(){
     // Draw Menu
     ////////////////////////////////
     // Button
-	var btnPlayBGM = game.add.button(100, 400, 'btn-playbackground', function(){}, this, 2, 1, 0);
+	var btnPlayBGM = game.add.button(ScreenWidth-130, 80, 'btn-playbackground', function(){console.log("23")}, this, 2, 1, 0);
     btnPlayBGM.onInputOver.add(PlayBGMover, this);
     btnPlayBGM.onInputOut.add(PlayBGMout, this);
+    btnPlayBGM.scale.setTo(0.15,0.15);
+    btnPlayBGM.anchor.setTo(0.5, 0.5)
 
-    var btnStopBGM = game.add.sprite(ScreenWidth - 150,50,'btn-stopbackground');
+    var btnStopBGM = game.add.button(ScreenWidth - 80,80, 'btn-playbackground', function(){}, this, 2, 1, 0);
     btnStopBGM.scale.setTo(0.15,0.15);
+    btnStopBGM.anchor.setTo(0.5, 0.5);
 
-    var btnRecord = game.add.sprite(ScreenWidth - 200,140,'btn-stopbackground');
+    var btnRecord = game.add.button(ScreenWidth - 160,140, 'btn-playbackground', function(){}, this, 2, 1, 0);
     btnRecord.scale.setTo(0.15,0.15);
+    btnRecord.anchor.setTo(0.5, 0.5);
 
-    var btnReplay = game.add.sprite(ScreenWidth - 200,220,'btn-stopbackground');
+    var btnReplay = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){}, this, 2, 1, 0);
     btnReplay.scale.setTo(0.15,0.15);
+    btnReplay.anchor.setTo(0.5, 0.5);
 
-    var btnInspiration = game.add.sprite(ScreenWidth - 200,280,'btn-stopbackground');
+    var btnInspiration = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){}, this, 2, 1, 0);
     btnInspiration.scale.setTo(0.15,0.15);
+    btnInspiration.anchor.setTo(0.5, 0.5);
 
-    var btnInstrument = game.add.sprite(ScreenWidth - 200,340,'btn-stopbackground');
+    var btnInstrument = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){}, this, 2, 1, 0);
     btnInstrument.scale.setTo(0.15,0.15);
+    btnInstrument.anchor.setTo(0.5, 0.5);
 
-    var btnBackGroundSong = game.add.sprite(ScreenWidth - 200,400,'btn-stopbackground');
+    var btnBackGroundSong = game.add.button(ScreenWidth - 200,220, 'btn-playbackground', function(){}, this, 2, 1, 0);
     btnBackGroundSong.scale.setTo(0.15,0.15);
+    btnBackGroundSong.anchor.setTo(0.5, 0.5);
 
 
     ///////////////////////////////////////

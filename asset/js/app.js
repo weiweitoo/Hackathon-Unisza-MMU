@@ -33,7 +33,6 @@ function create(){
 	console.log('create');
 
 	music = game.add.audio('slowblue');
-	
     music.play();
 
 	Qkey = game.input.keyboard.addKey(Phaser.Keyboard.Q);
@@ -71,7 +70,9 @@ function create(){
 }
 
 function update(){
-
+	window.onbeforeunload = function(e) {
+		alert(42);
+	};
 }
 
 function QKeyEvent(){

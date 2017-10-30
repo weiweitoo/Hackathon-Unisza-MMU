@@ -1,6 +1,10 @@
 var game = new Phaser.Game(window.screen.availWidth, window.screen.availHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 var normalColor = 0xFFFFFF;
 var pressColor = 0xa55cb2;
+var ScreenWidth = window.screen.availWidth;
+var ScreenHeight = window.screen.availHeight;
+var middleX = ScreenWidth / 2;
+var middleY = ScreenHeight / 2;
 
 
 function playSound(Note,delaytime,Velocity = 127,Volume = 127){
@@ -28,8 +32,25 @@ function preload(){
 	console.log("preload");
 
 	game.load.audio('slowblue', ['asset/audio/slowmusic.mp3']);
+
+
+	game.load.image('btn-playbackground','./asset/img/playbackgroundbutton.jpg');
+	game.load.image('btn-stopbackground','asset/img/stopbackgroundbutton.png');
+	game.load.image('btn-record','asset/img/recordbutton.png');
+	game.load.image('btn-replay','asset/img/replaybutton.png');
+	game.load.image('btn-inspiration','asset/img/inspirationbutton.png');
+	game.load.image('btn-instrument','/asset/img/instrumentbutton.png');
+	game.load.image('btn-backgroundsong','/asset/img/backgroundsongbutton.png');
+	
 }
 
+function PlayBGMover(){
+	console.log('in');
+}
+
+function PlayBGMout(){
+	console.log("out");
+}
 
 function create(){
 	console.log('create');
@@ -41,9 +62,35 @@ function create(){
     // Draw Menu
     ////////////////////////////////
     // Button
-    
+	var btnPlayBGM = game.add.button(game.world.centerX - 95, 400, 'btn-playbackground', function(){}, this, 2, 1, 0);
 
+	
+    btnPlayBGM.onInputOver.add(PlayBGMover, this);
+    btnPlayBGM.onInputOut.add(PlayBGMout, this);
+
+
+    var btnStopBGM = game.add.sprite(ScreenWidth - 150,50,'btn-stopbackground');
+    btnStopBGM.scale.setTo(0.15,0.15);
+
+    var btnRecord = game.add.sprite(ScreenWidth - 200,140,'btn-stopbackground');
+    btnRecord.scale.setTo(0.15,0.15);
+
+    var btnReplay = game.add.sprite(ScreenWidth - 200,220,'btn-stopbackground');
+    btnReplay.scale.setTo(0.15,0.15);
+
+    var btnInspiration = game.add.sprite(ScreenWidth - 200,280,'btn-stopbackground');
+    btnInspiration.scale.setTo(0.15,0.15);
+
+    var btnInstrument = game.add.sprite(ScreenWidth - 200,340,'btn-stopbackground');
+    btnInstrument.scale.setTo(0.15,0.15);
+
+    var btnBackGroundSong = game.add.sprite(ScreenWidth - 200,400,'btn-stopbackground');
+    btnBackGroundSong.scale.setTo(0.15,0.15);
+
+
+    ///////////////////////////////////////
     // Key event
+    /////////////////////////////////////////
 	Qkey = game.input.keyboard.addKey(Phaser.Keyboard.Q);
 	Qkey.onDown.add(QKeyEvent, this);
 	Qkey.onUp.add(QKeyEventUp, this);
@@ -91,10 +138,7 @@ function create(){
 	/////////////////////////////////////////////
 	// Graphic
 	/////////////////////////////////////////////
-	var ScreenWidth = window.screen.availWidth;
-	var ScreenHeight = window.screen.availHeight;
-	var middleX = ScreenWidth / 2;
-	var middleY = ScreenHeight / 2;
+	
 
 	// for row 1 and 2
 	// the varaible is keep resuing hehe, since it is lazy to change
@@ -297,21 +341,18 @@ function UKeyEventUp(){
 
 function IKeyEventUp(){
 	console.log("I");
-	playSound(74,0);
 	graphics.beginFill(normalColor);
 	graphics.drawRect((80 + 60) * 3,80 + 50,80,80);	
 }
 
 function OKeyEventUp(){
 	console.log("O");
-	playSound(76,0);
 	graphics.beginFill(normalColor);
 	graphics.drawRect((140 + 40) * 0,(80 + 50) * 2,140,80);	
 }
 
 function PKeyEventUp(){
 	console.log("P");
-	playSound(79,0);
 	graphics.beginFill(normalColor);
 	graphics.drawRect((140 + 40) * 1,(80 + 50) * 2,140,80);	
 	
@@ -319,7 +360,6 @@ function PKeyEventUp(){
 
 function OpenBracketKeyEventUp(){
 	console.log("[");
-	playSound(81,0);
 	graphics.beginFill(normalColor);
 	graphics.drawRect((140 + 40) * 2,(80 + 50) * 2,140,80);	
 }	

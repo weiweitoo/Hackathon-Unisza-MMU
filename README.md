@@ -1,7 +1,7 @@
 # :musical_note: Moozee
 Your lovely Jamming Parter and Inspired usic idea to you
 
-**https://github.com/weiweitoo/Hackathon-Unisza-MMU**
+**https://weiweitoo.github.io/Moozee/**
 
 ## :musical_note: Technology
 1. HTML

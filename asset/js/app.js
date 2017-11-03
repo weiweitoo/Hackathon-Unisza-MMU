@@ -4,6 +4,8 @@ var notes = [];
 var interval = [];
 var intervalInSecond = [];
 var recording = false;
+var enable_inspirate = false;
+var metronome;
 
 var keycode = [
 	81,87,69,82,84,
@@ -29,34 +31,45 @@ var alphabent = [
 
 var space_pressing = false;
 
-// For Front end
-$(document).ready(function(){
-	$(".playbgmbutton").hover(function() {
-		$( '.playbgmbutton' ).attr("src","asset/img/play-hover.PNG");
-		},
-		function(){
-			$( '.playbgmbutton' ).attr("src","asset/img/play.PNG");
-		}
-	)
-});
 
-function hehe(){
+function callBGMMenu(){
 	$('.bgm-window').css({
 		'transform':'translate(-50%,-50%)'
 	});
 	$('.black-layer').css({
-		'opacity' : '0.6'
+		'opacity' : '0.6',
+		'pointer-events' : 'initial'
 	});
 
-	$('.bgm-window > .close').on('click',function(){
-		$(this).parent().css({
+	$('.black-layer').on('click',function(){
+		$('.bgm-window').css({
 			'transform':'translate(-50%,-300%)'
 		});
 		$('.black-layer').css({
-			'opacity' : '0'
+			'opacity' : '0',
+			'pointer-events' : 'none'
 		});	  	
 	});
-	console.log(23);
+};
+
+function callInstruMenu(){
+	$('.instrument-window').css({
+		'transform':'translate(-50%,-50%)'
+	});
+	$('.black-layer').css({
+		'opacity' : '0.6',
+		'pointer-events' : 'initial'
+	});
+
+	$('.black-layer').on('click',function(){
+		$('.instrument-window').css({
+			'transform':'translate(-50%,-300%)'
+		});
+		$('.black-layer').css({
+			'opacity' : '0',
+			'pointer-events' : 'none'
+		});	  	
+	});
 };
 
 function playbgm(){
@@ -93,59 +106,71 @@ function getRandomInt(min, max) {
 }
 
 function inspiration(interval){
-    var originalPhraseCount = 3;
-    var phraseNoteCount = 3;
-	var phraseLeft = 4;
-    var up = [1,1,1,-1,-1,0,-1,1,1];
-    var phraseWaitCount = 0;
-    var noteNow = 10;
-	let metronome = setInterval(function tick() {
-        if (phraseNoteCount > 0){
-                playSound(NOTEPITCH[noteNow],0);
-                console.log(NOTEPITCH[noteNow]);
-                noteNow = noteNow + up[(phraseNoteCount-1)];
-                if ((noteNow > 24) || (noteNow < 0)){
-                    noteNow = noteNow - up[(phraseNoteCount-1)];
-                }
-                if (Math.random() < 0.25){
-                    let timerId = setTimeout(function noteBefore() {
-                        if (Math.random() < 0.125){
-                            playSound(NOTEPITCH[noteNow]+1,0);
-                        }
-                        else{
-                            playSound(NOTEPITCH[noteNow]-1,0);
-                        }
-                    }, 181.8181);
-                }
-                phraseNoteCount--;
-        }
-        else if (phraseWaitCount > 0){
-            phraseWaitCount--;
-                console.log("Wait");
-            noteNow = getRandomInt(7,15);
-            for (i = 0; i <= 8; i++){
-                up[i] = getRandomInt(-1,1);
+
+	if(enable_inspirate === true){
+		enable_inspirate = false;
+		clearInterval(metronome);
+		console.log('stop inspiration')
+	}
+	else if(enable_inspirate === false)
+    {
+    	console.log("start inspiration");
+    	enable_inspirate = true;
+    	var originalPhraseCount = 3;
+        var phraseNoteCount = 3;
+    	var phraseLeft = 4;
+        var up = [1,1,1,-1,-1,0,-1,1,1];
+        var phraseWaitCount = 0;
+        var noteNow = 10;
+    	metronome = setInterval(function tick() {
+            if (phraseNoteCount > 0){
+                    playSound(NOTEPITCH[noteNow],0);
+                    console.log(NOTEPITCH[noteNow]);
+                    noteNow = noteNow + up[(phraseNoteCount-1)];
+                    if ((noteNow > 24) || (noteNow < 0)){
+                        noteNow = noteNow - up[(phraseNoteCount-1)];
+                    }
+                    if (Math.random() < 0.2){
+                        let timerId = setTimeout(function noteBefore() {
+                            if (Math.random() < 0.1){
+                                playSound(NOTEPITCH[noteNow+1],0);
+                            }
+                            else{
+                                playSound(NOTEPITCH[noteNow-1],0);
+                            }
+                        }, 181.8181);
+                    }
+                    phraseNoteCount--;
             }
-        }
-        else{
-            if (phraseLeft > 1){
-                phraseLeft--;
-                phraseNoteCount = originalPhraseCount;
-                phraseWaitCount = 6 - phraseNoteCount;
-            }
-            else if (phraseLeft == 1){
-                playSound(NOTEPITCH[15],0);
-                originalPhraseCount = getRandomInt(3,6);
-                phraseNoteCount = originalPhraseCount;
-                phraseLeft = getRandomInt(2,4);
+            else if (phraseWaitCount > 0){
+                phraseWaitCount--;
+                    console.log("Wait");
+                noteNow = getRandomInt(7,15);
                 for (i = 0; i <= 8; i++){
                     up[i] = getRandomInt(-1,1);
                 }
-                phraseWaitCount = 6 - phraseNoteCount;
-                noteNow = 15;
             }
-        }
-	}, interval);
+            else{
+                if (phraseLeft > 1){
+                    phraseLeft--;
+                    phraseNoteCount = originalPhraseCount;
+                    phraseWaitCount = 6 - phraseNoteCount;
+                }
+                else if (phraseLeft == 1){
+                    playSound(NOTEPITCH[15],0);
+                    originalPhraseCount = getRandomInt(3,6);
+                    phraseNoteCount = originalPhraseCount;
+                    phraseLeft = getRandomInt(2,4);
+                    for (i = 0; i <= 8; i++){
+                        up[i] = getRandomInt(-1,1);
+                    }
+                    phraseWaitCount = 6 - phraseNoteCount;
+                    noteNow = 15;
+                }
+            }
+    	}, interval);
+    }
+
 }
 
 function playSound(Note,delaytime,Velocity = 127,Volume = 127){
@@ -272,7 +297,7 @@ $(document).ready(function(){
 					effect = '0px 0px 15px 6px ' + 'green';	
 				}
 				else if (temp == 4){
-					effect = '0px 0px 15px 6px ' + 'purple';	
+					effect = '0px 0px 15px 6px ' + '#900090';	
 				}
 
 				$('#' + alphabent[i] + 'key').css('box-shadow',effect);
@@ -287,6 +312,7 @@ $(document).ready(function(){
 		//For space key event
 		if(event.keyCode == 32 && space_pressing == false) {
 			space_pressing = true;
+			$('#spacekey').css('box-shadow','0px 0px 20px 6px white');
 			record();
 			// end recording
 			if(recording == false){
@@ -306,6 +332,7 @@ $(document).ready(function(){
 		// for space key event
 		if(event.keyCode == 32 && space_pressing == true) {
 			space_pressing = false;
+			$('#spacekey').css('box-shadow','none');
 		}
 	});
 });

@@ -20,11 +20,14 @@
 	<link rel="stylesheet" type="text/css" href="asset/css/style.css"/>
 	<!-- Jquery -->
 	<script type="text/javascript" src = "asset/js/jquery-latest.js"></script>
-	<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Oxygen" rel="stylesheet">
+
 </head>
 <body>
 <script type="text/javascript" src = "asset/js/app.js"></script>
 
+<button class = "btn-1 effect1" href = "#"><span>Login</span></button>
+<button class = "btn-2 effect1" href = "#"><span>Register</span></button>
 
 <div class = "main-wrapper">
 	<div class = "pad-wrapper">
@@ -89,6 +92,9 @@
 			</div>
 		</div>	
 	</div>
+	<div class = "space-pad" id ='spacekey'>
+		
+	</div>
 </div>
 
 <div class = "logo-wrapper">
@@ -98,12 +104,13 @@
 </div>
 
 <div class = "menu-wrapper">	
-	<img class = 'playbgmbutton' src="asset/img/play.PNG" onclick = 'playbgm()'/>
-	<img class = 'stopbgmbutton' src="asset/img/stop.PNG" onclick = 'stopbgm()'/>
-	<img class = 'replaybutton' src='asset/img/replay.PNG' onclick = 'playSoundWithIntervalToo()'/>
-	<img class = "recordbutton"  src="asset/img/record.PNG" onclick = 'record()'/>
-	<img class = "instrubutton"  src="asset/img/instru.PNG" onclick = 'hehe()'/>
-	<img class = "bgmbutton"  src="asset/img/bgm.PNG" onclick = 'inspiration(363.6363)'/>
+	<img class = 'playbgmbutton' title='Play BGM' src="asset/img/play.PNG" onclick = 'playbgm()'/>
+	<img class = 'stopbgmbutton' title='Stop BGM' src="asset/img/stop.PNG" onclick = 'stopbgm()'/>
+	<img class = 'replaybutton' title='Replay Recorded' src='asset/img/replay.PNG' onclick = 'playSoundWithIntervalToo()'/>
+	<img class = "recordbutton" title="Record"  src="asset/img/record.PNG" onclick = 'record()'/>
+	<img class = "instrubutton" title="Instrument"  src="asset/img/instru.PNG" onclick = 'callInstruMenu()'/>
+	<img class = "bgmbutton" title="BGM" src="asset/img/bgm.PNG" onclick = 'callBGMMenu()'/>
+	<img class = "inspirationbutton" title="Inspiration"  src="asset/img/inspiration.PNG" onclick = 'inspiration(363.6363)'/>
 </div>
 
 <video class = "backgroundmusic" preload>
@@ -112,22 +119,18 @@
 		Please use Google Chrome.
 </video>
 
-<div class = "black-layer">
-	
+<div class = "black-layer">	
 </div>
 
 <div class="popup-wrapper bgm-window">
-	<div class = "window-title">Choose a Song</div>
+	<div class = "window-title">Choose Background Music</div>
+	<span class="close">
+		<i class="fa fa-close"></i>
+	</span>
 	<ul class = 'popup'>
 		<li class = 'item unlock'>
 			<div class="item-name">
 				Rock
-			</div>
-			<div class="icon-lock">
-				<div class="lock-top-1"></div>
-				<div class="lock-top-2"></div>
-				<div class="lock-body"></div>
-				<div class="lock-hole"></div>
 			</div>
 		</li>
 		<li class = 'item'>
@@ -168,12 +171,16 @@
 </div>
 
 <div class="popup-wrapper instrument-window">
-	<div class = 'window-title'></div>
-	<div>Choose Instrument</div>
+	<div class = "window-title">Choose Instrument</div>
 	<ul class = 'popup'>
 		<li class = 'item unlock'>
 			<div class="item-name">
-				Rock
+				Piano
+			</div>
+		</li>
+		<li class = 'item'>
+			<div class="item-name">
+				Drum
 			</div>
 			<div class="icon-lock">
 				<div class="lock-top-1"></div>
@@ -184,7 +191,7 @@
 		</li>
 		<li class = 'item'>
 			<div class="item-name">
-				Pop
+				Harmonica
 			</div>
 			<div class="icon-lock">
 				<div class="lock-top-1"></div>
@@ -195,18 +202,7 @@
 		</li>
 		<li class = 'item'>
 			<div class="item-name">
-				Jazz
-			</div>
-			<div class="icon-lock">
-				<div class="lock-top-1"></div>
-				<div class="lock-top-2"></div>
-				<div class="lock-body"></div>
-				<div class="lock-hole"></div>
-			</div>
-		</li>
-		<li class = 'item'>
-			<div class="item-name">
-				Hip-Hop
+				Cello
 			</div>
 			<div class="icon-lock">
 				<div class="lock-top-1"></div>

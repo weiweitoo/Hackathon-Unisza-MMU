@@ -47,6 +47,9 @@ body {
   min-width: 100%;
   min-height: 100%; }
 
+video {
+  pointer-events: none; }
+
 #main-wrapper {
   min-width: 100%;
   min-height: 100%; }
@@ -56,7 +59,7 @@ body {
   max-width: 500px;
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 42%;
   transform: translate(-50%, -50%);
   box-shadow: 0px 0px 5px 1px white;
   border-radius: 5px; }
@@ -90,13 +93,13 @@ body {
   .pad-wrapper .col-3 {
     background: darksalmon;
     /* For browsers that do not support gradients */
-    background: -webkit-radial-gradient(white, #eb5032, #ff2828);
+    background: -webkit-radial-gradient(rgba(250, 250, 250, 0.8), #ff795f, #ff2828);
     /* Safari 5.1 to 6.0 */
-    background: -o-radial-gradient(white, #eb5032, #ff2828);
+    background: -o-radial-gradient(rgba(250, 250, 250, 0.8), #ff795f, #ff2828);
     /* For Opera 11.6 to 12.0 */
-    background: -moz-radial-gradient(white, #eb5032, #ff2828);
+    background: -moz-radial-gradient(rgba(250, 250, 250, 0.8), #ff795f, #ff2828);
     /* For Firefox 3.6 to 15 */
-    background: radial-gradient(white, #eb5032, #ff2828); }
+    background: radial-gradient(rgba(250, 250, 250, 0.8), #ff795f, #ff2828); }
   .pad-wrapper .col-4 {
     background: darkseagreen;
     /* For browsers that do not support gradients */
@@ -127,23 +130,41 @@ body {
   height: auto;
   width: auto;
   position: absolute;
-  right: 5%;
+  left: 0;
   display: grid; }
   .menu-wrapper .playbgmbutton,
   .menu-wrapper .stopbgmbutton,
   .menu-wrapper .replaybutton,
   .menu-wrapper .recordbutton,
   .menu-wrapper .instrubutton,
-  .menu-wrapper .bgmbutton {
+  .menu-wrapper .bgmbutton,
+  .menu-wrapper .inspirationbutton {
     float: left;
     margin: 10px;
-    width: 45px; }
+    width: 45px;
+    cursor: pointer;
+    -webkit-transition: all 0.6s ease-out;
+    -moz-transition: all 0.6s ease-out;
+    -ms-transition: all 0.6s ease-out;
+    -o-transition: all 0.6s ease-out;
+    transition: all 0.6s ease-out; }
+    .menu-wrapper .playbgmbutton:hover,
+    .menu-wrapper .stopbgmbutton:hover,
+    .menu-wrapper .replaybutton:hover,
+    .menu-wrapper .recordbutton:hover,
+    .menu-wrapper .instrubutton:hover,
+    .menu-wrapper .bgmbutton:hover,
+    .menu-wrapper .inspirationbutton:hover {
+      opacity: 0.5; }
 
 * {
   margin: 0;
   padding: 0;
   -webkit-box-sizing: border-box;
   box-sizing: border-box; }
+
+body {
+  font-family: 'Oxygen', sans-serif; }
 
 .popup-wrapper {
   position: absolute;
@@ -197,8 +218,8 @@ body {
   width: 100%;
   background: black;
   opacity: 0;
-  pointer-events: none;
   position: absolute;
+  pointer-events: none;
   top: 0;
   left: 0;
   -webkit-transition: all 0.4s ease-out;
@@ -263,5 +284,117 @@ body {
   margin-left: -20%;
   top: 100%;
   background-color: inherit; }
+
+.window-title {
+  color: white;
+  text-align: center;
+  position: relative;
+  top: 20px; }
+
+.space-pad {
+  width: 500px;
+  height: 80px;
+  border-radius: 10px;
+  position: absolute;
+  left: 50%;
+  top: 90%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(rgba(255, 255, 255, 0.8), #c5c7ca, #b5b5b5); }
+
+.nav-bar {
+  position: absolute;
+  right: 3%; }
+  .nav-bar > ul {
+    display: inline-flex; }
+    .nav-bar > ul > li {
+      margin: 0px 10px 0px 10px; }
+      .nav-bar > ul > li:hover > div {
+        opacity: 0.7; }
+      .nav-bar > ul > li > div {
+        background: white;
+        min-width: 50px;
+        height: auto;
+        padding: 10px;
+        border-radius: 10px;
+        -webkit-transition: all 0.4s ease-out;
+        -moz-transition: all 0.4s ease-out;
+        -ms-transition: all 0.4s ease-out;
+        -o-transition: all 0.4s ease-out;
+        transition: all 0.4s ease-out; }
+
+.effect1 {
+  color: white;
+  padding: 8px;
+  font-size: 14px;
+  font-family: 'Abel', sans-serif;
+  -webkit-transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  -moz-transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  -ms-transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  -o-transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+  .effect1:hover {
+    padding: 12px; }
+    .effect1:hover:after {
+      -webkit-transform: scale3d(1, 1, 1);
+      transform: scale3d(1, 1, 1);
+      border: 2px solid rgba(255, 255, 255, 0);
+      box-shadow: inset 0 0 10px 1px #00f1ff; }
+    .effect1:hover:before {
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border: 2px solid rgba(0, 241, 255, 0.4);
+      box-shadow: 0 0 20px 2px #00f1ff; }
+  .effect1:focus {
+    outline: none; }
+  .effect1:before {
+    content: "";
+    top: -8px;
+    bottom: -6px;
+    left: 2px;
+    right: 2px;
+    content: '';
+    position: absolute;
+    border-radius: inherit;
+    opacity: 0.6;
+    z-index: -1;
+    border: 1px solid white;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out; }
+  .effect1:after {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-transform: scale3d(1.1, 1, 1);
+    transform: scale3d(1.1, 1, 1);
+    content: '';
+    position: absolute;
+    border-radius: inherit;
+    z-index: -1;
+    border: 1px solid white;
+    -webkit-transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    -moz-transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    -ms-transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    -o-transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+
+.btn-1 {
+  position: absolute;
+  top: 3%;
+  right: 12%;
+  background: transparent;
+  border: none; }
+
+.btn-2 {
+  position: absolute;
+  top: 3%;
+  right: 5%;
+  background: transparent;
+  border: none; }
 
 /*# sourceMappingURL=style.css.map */

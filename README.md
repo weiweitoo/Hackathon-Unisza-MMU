@@ -16,10 +16,10 @@ Your lovely Jamming Parter and Inspired usic idea to you
 
 ## Control
 There are 5 row in the pad
-| *Row* | *Key* 	|
-| -----	| --------- |
-| 1		| Q W E R T |
-| 2		| A S D F G |
-| 3 	| Z X C V B |
-| 4		| Y U I O P |
-| 5 	| H J K L ; |
+
+
+| Row    | Key       |
+| ------ |:---------:|
+| 1      | Q W E R T |
+| 2      | A S D F G |
+| 3      | Z X C V B |
